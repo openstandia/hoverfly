@@ -49,7 +49,7 @@ require (
 	github.com/spf13/cast v0.0.0-20160314192028-27b586b42e29 // indirect
 	github.com/spf13/cobra v0.0.0-20160517171929-f36824430130
 	github.com/spf13/jwalterweatherman v0.0.0-20160311093646-33c24e77fb80 // indirect
-	github.com/spf13/pflag v1.0.3 // indirect
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v0.0.0-20160508180713-d8a428b8a306
 	github.com/tdewolff/minify v2.3.6+incompatible
 	github.com/tdewolff/parse v2.3.4+incompatible // indirect
@@ -62,6 +62,7 @@ require (
 	gonum.org/v1/gonum v0.7.0
 	gonum.org/v1/netlib v0.0.0-20200317120129-c5a04cffd98a // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v2 v2.0.0-20160301204022-a83829b6f129
 	k8s.io/client-go v6.0.0+incompatible
