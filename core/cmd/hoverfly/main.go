@@ -39,6 +39,7 @@ import (
 	"github.com/SpectoLabs/hoverfly/core/matching"
 	mw "github.com/SpectoLabs/hoverfly/core/middleware"
 	"github.com/SpectoLabs/hoverfly/core/modes"
+	"github.com/SpectoLabs/hoverfly/core/util"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -238,40 +239,6 @@ func main() {
 		})
 	}
 
-	if len(logOutputFlags) == 0 {
-		// default logging on console when no flag given
-		log.SetOutput(os.Stdout)
-	} else {
-
-		logOutputFlags = removeDuplicates(logOutputFlags)
-
-		_, isLogFile := Find(logOutputFlags, "file")
-		if !isLogFile && isFlagPassed("logs-file") {
-			log.WithFields(log.Fields{
-				"logs-file": *logsFile,
-			}).Fatal("-logs-file is not allowed unless -logs-output is set to 'file'.")
-		}
-
-		writers := make([]io.Writer, 0)
-		for _, logsOutput := range logOutputFlags {
-			if logsOutput == "file" {
-				file, err := os.OpenFile(*logsFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-				if err == nil {
-					writers = append(writers, file)
-				} else {
-					log.Fatal("Failed to write log file:" + *logsFile)
-				}
-			} else if logsOutput == "console" {
-				writers = append(writers, os.Stdout)
-			} else {
-				log.WithFields(log.Fields{
-					"logs-output": logsOutput,
-				}).Fatal("Unknown logs output type")
-			}
-		}
-		log.SetOutput(io.MultiWriter(writers...))
-	}
-
 	if *version {
 		fmt.Println(hv.NewHoverfly().GetVersion())
 		os.Exit(0)
@@ -304,6 +271,56 @@ func main() {
 		}).Fatal("Unknown log-level value")
 	}
 	log.SetLevel(logLevel)
+
+	if len(logOutputFlags) == 0 {
+		// default logging on console when no flag given
+		log.SetOutput(os.Stdout)
+	} else {
+
+		logOutputFlags = removeDuplicates(logOutputFlags)
+
+		_, isLogFile := Find(logOutputFlags, "file")
+		if !isLogFile && isFlagPassed("logs-file") {
+			log.WithFields(log.Fields{
+				"logs-file": *logsFile,
+			}).Fatal("-logs-file is not allowed unless -logs-output is set to 'file'.")
+		}
+
+		writers := make([]io.Writer, 0)
+		for _, logsOutput := range logOutputFlags {
+			if logsOutput == "file" {
+				var formatter log.Formatter
+				if *logsFormat == "json" {
+					formatter = &log.JSONFormatter{}
+				} else {
+					formatter = &log.TextFormatter{
+						ForceColors:      true,
+						DisableTimestamp: false,
+						FullTimestamp:    true,
+						DisableColors:    true,
+					}
+				}
+				logFileHook, err := util.NewLogFileHook(util.LogFileConfig{
+					Filename:  *logsFile,
+					Level:     logLevel,
+					Formatter: formatter,
+				})
+				if err == nil {
+					// add hook to write logs into file
+					log.AddHook(logFileHook)
+				} else {
+					log.Fatal("Failed to write log file:" + *logsFile)
+				}
+			} else if logsOutput == "console" {
+				writers = append(writers, os.Stdout)
+			} else {
+				log.WithFields(log.Fields{
+					"logs-output": logsOutput,
+				}).Fatal("Unknown logs output type")
+			}
+		}
+		log.SetOutput(io.MultiWriter(writers...))
+	}
 
 	if *verbose {
 		// Only log the warning severity or above.
