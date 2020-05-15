@@ -1,8 +1,6 @@
 package hoverfly_test
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -36,6 +34,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			Expect(err).To(BeNil())
 
 			text, err := hoverfly.GetLogFile("hoverfly.log")
+			Expect(text).NotTo(ContainSubstring("[36mINFO"))
 			Expect(text).To(ContainSubstring("level=info msg=\"Webserver prepared...\""))
 			Expect(err).To(BeNil())
 		})
@@ -49,6 +48,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			Expect(out).To(Equal(""))
 
 			text, err := hoverfly.GetLogFile("log-test.log")
+			Expect(text).NotTo(ContainSubstring("[36mINFO"))
 			Expect(text).To(ContainSubstring("level=info msg=\"Webserver prepared...\""))
 			Expect(err).To(BeNil())
 
@@ -64,7 +64,8 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			out, err := hoverfly.GetStdOut()
 
 			Expect(err).To(BeNil())
-			fmt.Print(out)
+			// assert ANSI escape code
+			Expect(out).To(ContainSubstring("[36mINFO"))
 			Expect(out).To(ContainSubstring("Webserver prepared..."))
 		})
 
@@ -78,10 +79,11 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			out, err := hoverfly.GetStdOut()
 
 			Expect(err).To(BeNil())
-			fmt.Print(out)
+			Expect(out).To(ContainSubstring("[36mINFO"))
 			Expect(out).To(ContainSubstring("Webserver prepared..."))
 
 			text, err := hoverfly.GetLogFile("hoverfly.log")
+			Expect(text).NotTo(ContainSubstring("[36mINFO"))
 			Expect(text).To(ContainSubstring("level=info msg=\"Webserver prepared...\""))
 			Expect(err).To(BeNil())
 		})
@@ -92,10 +94,11 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			out, err := hoverfly.GetStdOut()
 
 			Expect(err).To(BeNil())
-			fmt.Print(out)
+			Expect(out).To(ContainSubstring("[36mINFO"))
 			Expect(out).To(ContainSubstring("Webserver prepared..."))
 
 			text, err := hoverfly.GetLogFile("test.log")
+			Expect(text).NotTo(ContainSubstring("[36mINFO"))
 			Expect(text).To(ContainSubstring("level=info msg=\"Webserver prepared...\""))
 			Expect(err).To(BeNil())
 		})
