@@ -2,8 +2,9 @@ package api_test
 
 import (
 	"net/http"
+	"time"
 
-	"github.com/SpectoLabs/hoverfly/functional-tests"
+	functional_tests "github.com/SpectoLabs/hoverfly/functional-tests"
 	"github.com/dghubble/sling"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -29,6 +30,8 @@ var _ = Describe("/api/v2/shutdown", func() {
 		It("should shutdown after 10 seconds", func() {
 			response := functional_tests.DoRequest(sling.New().Delete("http://localhost:" + hoverfly.GetAdminPort() + "/api/v2/shutdown"))
 			Expect(response.StatusCode).To(Equal(http.StatusOK))
+
+			time.Sleep(10 * time.Second)
 
 			request, _ := sling.New().Get("http://localhost:" + hoverfly.GetAdminPort() + "/api/v2/hoverfly/mode").Request()
 			_, err := http.DefaultClient.Do(request)
