@@ -19,7 +19,7 @@ import (
 
 	"io"
 
-	v2 "github.com/SpectoLabs/hoverfly/core/handlers/v2"
+	"github.com/SpectoLabs/hoverfly/core/handlers/v2"
 	"github.com/dghubble/sling"
 	"github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
