@@ -24,7 +24,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 	Context("with flag -logs-output=file", func() {
 
-		It("and it should write logs into default hoverfly.log ", func() {
+		It("and it should write logs into file hoverfly.log in plaintext", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=file")
 
@@ -39,7 +39,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			Expect(err).To(BeNil())
 		})
 
-		It("and it should write logs info sprcified log file", func() {
+		It("and it should write logs into sprcified log file in plaintext", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=file", "-logs-file=log-test.log")
 			out, err := hoverfly.GetStdOut()
@@ -58,7 +58,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 	Context("with flag -logs-output=console", func() {
 
-		It("and it should show logs on console", func() {
+		It("and it should show logs on console with colors", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=console")
 			out, err := hoverfly.GetStdOut()
@@ -73,7 +73,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 	Context("with flag -logs-output=console and -logs-out=file", func() {
 
-		It("and it should show logs on console and write logs into file", func() {
+		It("and it should show logs on console with colors and write logs into file in plaintext", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=console", "-logs-output=file")
 			out, err := hoverfly.GetStdOut()
@@ -88,7 +88,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			Expect(err).To(BeNil())
 		})
 
-		It("and it should show logs on console and write logs into file", func() {
+		It("and it should show logs on console with colors and write logs into specified file in plaintext", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=console", "-logs-output=file", "-logs-file=test.log")
 			out, err := hoverfly.GetStdOut()
