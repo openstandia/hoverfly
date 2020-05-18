@@ -2,7 +2,6 @@ package api_test
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/SpectoLabs/hoverfly/functional-tests"
 	"github.com/dghubble/sling"
