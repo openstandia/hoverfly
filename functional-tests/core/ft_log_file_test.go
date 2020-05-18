@@ -39,7 +39,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			Expect(err).To(BeNil())
 		})
 
-		It("and it should write logs into sprcified log file in plaintext", func() {
+		It("and it should write logs into specified log file in plaintext", func() {
 
 			hoverfly.Start("-webserver", "-logs-output=file", "-logs-file=log-test.log")
 			out, err := hoverfly.GetStdOut()
