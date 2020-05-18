@@ -1,6 +1,0 @@
-[36mINFO[0m[2020-05-18T12:08:25+09:00] Default proxy port has been overwritten       [36mport[0m=44889
-[36mINFO[0m[2020-05-18T12:08:25+09:00] Default admin port has been overwritten       [36mport[0m=36181
-[36mINFO[0m[2020-05-18T12:08:25+09:00] Using memory backend                         
-[36mINFO[0m[2020-05-18T12:08:25+09:00] Proxy prepared...                             [36mDestination[0m=. [36mMode[0m=simulate [36mProxyPort[0m=44889
-[36mINFO[0m[2020-05-18T12:08:25+09:00] current proxy configuration                   [36mdestination[0m=. [36mmode[0m=simulate [36mport[0m=44889
-[31mFATA[0m[2020-05-18T12:08:25+09:00] Failed to start proxy                         [31merror[0m="listen tcp 127.0.0.1:44889: bind: address already in use"
