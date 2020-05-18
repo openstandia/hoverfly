@@ -31,8 +31,6 @@ var _ = Describe("/api/v2/shutdown", func() {
 			response := functional_tests.DoRequest(sling.New().Delete("http://localhost:" + hoverfly.GetAdminPort() + "/api/v2/shutdown"))
 			Expect(response.StatusCode).To(Equal(http.StatusOK))
 
-			time.Sleep(10 * time.Second)
-
 			request, _ := sling.New().Get("http://localhost:" + hoverfly.GetAdminPort() + "/api/v2/hoverfly/mode").Request()
 			_, err := http.DefaultClient.Do(request)
 
