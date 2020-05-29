@@ -38,9 +38,9 @@ type Target struct {
 	Username    string
 	Password    string
 
-	Simulations []string `yaml:",omitempty"`
+	LogLevel string
 
-	JournalFile string `yaml:",omitempty"`
+	Simulations []string `yaml:",omitempty"`
 
 	LogOutput []string `yaml:",omitempty"`
 	LogFile   string   `yaml:",omitempty"`
@@ -79,16 +79,16 @@ func NewTarget(name, host string, adminPort, proxyPort int) *Target {
 func (this Target) BuildFlags() Flags {
 	flags := Flags{}
 
-	if this.JournalFile != "" {
-		flags = append(flags, "-journal-file="+this.JournalFile)
-	}
-
 	hasLogOutputFile := false
 	for _, logOutput := range this.LogOutput {
 		flags = append(flags, "-logs-output="+logOutput)
 		if logOutput == "file" {
 			hasLogOutputFile = true
 		}
+	}
+
+	if this.LogLevel != "" {
+		flags = append(flags, "-log-level="+this.LogLevel)
 	}
 
 	if this.LogFile != "" {

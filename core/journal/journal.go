@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"sync"
 	"time"
@@ -16,6 +15,7 @@ import (
 	"github.com/SpectoLabs/hoverfly/core/matching"
 	"github.com/SpectoLabs/hoverfly/core/models"
 	"github.com/SpectoLabs/hoverfly/core/util"
+	log "github.com/sirupsen/logrus"
 )
 
 const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
@@ -30,7 +30,6 @@ type JournalEntry struct {
 
 type Journal struct {
 	entries    []JournalEntry
-	writer     io.Writer
 	EntryLimit int
 	mutex      sync.Mutex
 }
@@ -38,7 +37,6 @@ type Journal struct {
 func NewJournal() *Journal {
 	return &Journal{
 		entries:    []JournalEntry{},
-		writer:     nil,
 		EntryLimit: 1000,
 	}
 }
@@ -72,25 +70,25 @@ func (this *Journal) NewEntry(request *http.Request, response *http.Response, mo
 	}
 
 	this.entries = append(this.entries, entry)
-	if this.writer != nil {
-		buf := new(bytes.Buffer)
-		enc := json.NewEncoder(buf)
-		// do not escape characters in HTML like < and >
-		enc.SetEscapeHTML(false)
-		err := enc.Encode(convertJournalEntry(entry))
-		if err != nil {
-			io.WriteString(this.writer, err.Error())
-		} else {
-			this.writer.Write(buf.Bytes())
-		}
+
+	buf := new(bytes.Buffer)
+	enc := json.NewEncoder(buf)
+	// do not escape characters in HTML like < and >
+	enc.SetEscapeHTML(false)
+	err := enc.Encode(convertJournalEntry(entry))
+	if err != nil {
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+		}).Error("invalid journal entry")
+	} else {
+		log.WithFields(log.Fields{
+			"json": buf.String(),
+		}).Debug("journal entry")
 	}
+
 	this.mutex.Unlock()
 
 	return nil
-}
-
-func (this *Journal) SetWriter(writer io.Writer) {
-	this.writer = writer
 }
 
 func (this *Journal) GetEntries(offset int, limit int, from *time.Time, to *time.Time, sort string) (v2.JournalView, error) {

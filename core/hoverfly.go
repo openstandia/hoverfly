@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
 	"sync"
 
 	"github.com/SpectoLabs/goproxy"
@@ -93,13 +92,6 @@ func NewHoverflyWithConfiguration(cfg *Configuration) *Hoverfly {
 		} else {
 			// Backward compatibility, always set default cache if cache size is not configured
 			requestCache = cache.NewDefaultLRUCache()
-		}
-	}
-
-	if cfg.JournalFile != "" {
-		f, err := os.OpenFile(cfg.JournalFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			hoverfly.Journal.SetWriter(f)
 		}
 	}
 

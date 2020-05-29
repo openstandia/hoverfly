@@ -110,7 +110,6 @@ var (
 	logNoColor = flag.Bool("log-no-color", false, "Disable colors for logging")
 
 	journalSize   = flag.Int("journal-size", 1000, "Set the size of request/response journal")
-	journalFile   = flag.String("journal-file", "", "Specify a file name for journal output")
 	cacheSize     = flag.Int("cache-size", 1000, "Set the size of request/response cache")
 	cors          = flag.Bool("cors", false, "Enable CORS support")
 	noImportCheck = flag.Bool("no-import-check", false, "Skip duplicate request check when importing simulations")
@@ -302,16 +301,6 @@ func main() {
 		log.Info("Log level set to verbose")
 	}
 	cfg.Verbose = *verbose
-
-	if *journalFile != "" {
-		f, err := os.OpenFile(*journalFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err.Error(),
-			}).Fatal("Failed to create journal file: " + *journalFile)
-		}
-		hoverfly.Journal.SetWriter(f)
-	}
 
 	if *dev {
 		handlers.EnableCors = true
