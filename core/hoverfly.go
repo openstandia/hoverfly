@@ -2,10 +2,15 @@ package hoverfly
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"sync"
+
 	"github.com/SpectoLabs/goproxy"
 	"github.com/SpectoLabs/hoverfly/core/authentication/backends"
 	"github.com/SpectoLabs/hoverfly/core/cache"
-	"github.com/SpectoLabs/hoverfly/core/handlers/v2"
+	v2 "github.com/SpectoLabs/hoverfly/core/handlers/v2"
 	"github.com/SpectoLabs/hoverfly/core/journal"
 	"github.com/SpectoLabs/hoverfly/core/matching"
 	"github.com/SpectoLabs/hoverfly/core/metrics"
@@ -14,9 +19,6 @@ import (
 	"github.com/SpectoLabs/hoverfly/core/state"
 	"github.com/SpectoLabs/hoverfly/core/templating"
 	log "github.com/sirupsen/logrus"
-	"net"
-	"net/http"
-	"sync"
 )
 
 // Hoverfly provides access to hoverfly - updating/starting/stopping proxy, http client and configuration, cache access
@@ -91,6 +93,13 @@ func NewHoverflyWithConfiguration(cfg *Configuration) *Hoverfly {
 		} else {
 			// Backward compatibility, always set default cache if cache size is not configured
 			requestCache = cache.NewDefaultLRUCache()
+		}
+	}
+
+	if cfg.LogHttpRequestResponse {
+		f, err := os.OpenFile("journal.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			hoverfly.Journal.SetWriter(f)
 		}
 	}
 

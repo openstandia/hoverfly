@@ -1,7 +1,10 @@
 package journal
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"sync"
 	"time"
@@ -9,7 +12,7 @@ import (
 	sorting "sort"
 	"strings"
 
-	"github.com/SpectoLabs/hoverfly/core/handlers/v2"
+	v2 "github.com/SpectoLabs/hoverfly/core/handlers/v2"
 	"github.com/SpectoLabs/hoverfly/core/matching"
 	"github.com/SpectoLabs/hoverfly/core/models"
 	"github.com/SpectoLabs/hoverfly/core/util"
@@ -27,6 +30,7 @@ type JournalEntry struct {
 
 type Journal struct {
 	entries    []JournalEntry
+	writer     io.Writer
 	EntryLimit int
 	mutex      sync.Mutex
 }
@@ -34,6 +38,7 @@ type Journal struct {
 func NewJournal() *Journal {
 	return &Journal{
 		entries:    []JournalEntry{},
+		writer:     nil,
 		EntryLimit: 1000,
 	}
 }
@@ -58,16 +63,34 @@ func (this *Journal) NewEntry(request *http.Request, response *http.Response, mo
 		this.entries = append(this.entries[:0], this.entries[1:]...)
 	}
 
-	this.entries = append(this.entries, JournalEntry{
+	entry := JournalEntry{
 		Request:     &payloadRequest,
 		Response:    payloadResponse,
 		Mode:        mode,
 		TimeStarted: started,
 		Latency:     time.Since(started),
-	})
+	}
+
+	this.entries = append(this.entries, entry)
+	if this.writer != nil {
+		buf := new(bytes.Buffer)
+		enc := json.NewEncoder(buf)
+		// do not escape characters in HTML like < and >
+		enc.SetEscapeHTML(false)
+		err := enc.Encode(convertJournalEntry(entry))
+		if err != nil {
+			io.WriteString(this.writer, err.Error())
+		} else {
+			this.writer.Write(buf.Bytes())
+		}
+	}
 	this.mutex.Unlock()
 
 	return nil
+}
+
+func (this *Journal) SetWriter(writer io.Writer) {
+	this.writer = writer
 }
 
 func (this *Journal) GetEntries(offset int, limit int, from *time.Time, to *time.Time, sort string) (v2.JournalView, error) {
@@ -218,6 +241,17 @@ func convertJournalEntries(entries []JournalEntry) []v2.JournalEntryView {
 	}
 
 	return journalEntryViews
+}
+
+func convertJournalEntry(entry JournalEntry) v2.JournalEntryView {
+
+	return v2.JournalEntryView{
+		Request:     entry.Request.ConvertToRequestDetailsView(),
+		Response:    entry.Response.ConvertToResponseDetailsView(),
+		Mode:        entry.Mode,
+		TimeStarted: entry.TimeStarted.Format(RFC3339Milli),
+		Latency:     entry.Latency.Seconds() * 1e3,
+	}
 }
 
 func getSortParameters(sort string) (string, string, error) {

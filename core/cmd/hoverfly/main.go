@@ -304,6 +304,15 @@ func main() {
 	cfg.Verbose = *verbose
 
 	cfg.LogHttpRequestResponse = *logHttpRequestResponse
+	if *logHttpRequestResponse {
+		f, err := os.OpenFile("journal.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err.Error(),
+			}).Fatal("Failed to create journal.log")
+		}
+		hoverfly.Journal.SetWriter(f)
+	}
 
 	if *dev {
 		handlers.EnableCors = true

@@ -2,7 +2,6 @@ package hoverfly_test
 
 import (
 	"io/ioutil"
-	"regexp"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,13 +10,6 @@ import (
 	"github.com/SpectoLabs/hoverfly/functional-tests/testdata"
 	"github.com/dghubble/sling"
 )
-
-// remove ANSI escaped color codes
-func removeEscapedChars(str string) string {
-	re := regexp.MustCompile(`\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])`)
-	s := re.ReplaceAllString(str, "")
-	return s
-}
 
 var _ = Describe("When running Hoverfly as a webserver", func() {
 
@@ -52,19 +44,13 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 					Expect(string(responseBody)).To(Equal("body1"))
 
-					req := sling.New().Get("http://localhost:"+hoverfly.GetAdminPort()+"/api/v2/logs").Add("Accept", "text/plain")
-					res := functional_tests.DoRequest(req)
-					Expect(res.StatusCode).To(Equal(200))
-
-					logs, err := ioutil.ReadAll(res.Body)
+					journal, err := hoverfly.GetLogFile("journal.log")
 					Expect(err).To(BeNil())
-					log := removeEscapedChars(string(logs))
-					Expect(log).To(ContainSubstring("HTTP Message"))
-					Expect(log).To(ContainSubstring("Path=/path1"))
-					Expect(log).To(ContainSubstring("Scheme=http"))
-					Expect(log).To(ContainSubstring("Method=GET"))
-					Expect(log).To(ContainSubstring("ResponseBody=" + string(responseBody)))
-					Expect(log).To(ContainSubstring("Status=201"))
+					Expect(journal).To(ContainSubstring(`"path":"/path1"`))
+					Expect(journal).To(ContainSubstring(`"scheme":"http"`))
+					Expect(journal).To(ContainSubstring(`"method":"GET"`))
+					Expect(journal).To(ContainSubstring(`"body":"`+string(responseBody)+`"`))
+					Expect(journal).To(ContainSubstring(`"status":201`))
 				})
 			})
 
@@ -79,19 +65,13 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 					Expect(string(responseBody)).To(Equal("POST body response"))
 
-					req := sling.New().Get("http://localhost:"+hoverfly.GetAdminPort()+"/api/v2/logs").Add("Accept", "text/plain")
-					res := functional_tests.DoRequest(req)
-					Expect(res.StatusCode).To(Equal(200))
-
-					logs, err := ioutil.ReadAll(res.Body)
+					journal, err := hoverfly.GetLogFile("journal.log")
 					Expect(err).To(BeNil())
-					log := removeEscapedChars((string(logs)))
-					Expect(log).To(ContainSubstring("HTTP Message"))
-					Expect(log).To(ContainSubstring("Path=/path2/resource"))
-					Expect(log).To(ContainSubstring("Scheme=http"))
-					Expect(log).To(ContainSubstring("Method=POST"))
-					Expect(log).To(ContainSubstring("ResponseBody=\"" + string(responseBody) + "\""))
-					Expect(log).To(ContainSubstring("Status=200"))
+					Expect(journal).To(ContainSubstring(`"path":"/path2/resource"`))
+					Expect(journal).To(ContainSubstring(`"scheme":"http"`))
+					Expect(journal).To(ContainSubstring(`"method":"POST"`))
+					Expect(journal).To(ContainSubstring(`"body":"`+string(responseBody)+`"`))
+					Expect(journal).To(ContainSubstring(`"status":200`))
 				})
 			})
 		})
