@@ -46,8 +46,6 @@ type Configuration struct {
 
 	NoImportCheck bool
 
-	JournalFile string
-
 	ClientAuthenticationDestination string
 	ClientAuthenticationClientCert  string
 	ClientAuthenticationClientKey   string
@@ -204,8 +202,6 @@ func InitSettings() *Configuration {
 	appConfig.ProxyAuthorizationHeader = "Proxy-Authorization"
 
 	appConfig.CacheSize = 1000
-
-	appConfig.JournalFile = ""
 
 	return &appConfig
 }
