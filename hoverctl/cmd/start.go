@@ -116,7 +116,7 @@ hoverctl configuration file.
 		}
 
 		target.LogHttpRequestResponse, _ = cmd.Flags().GetBool("log-http")
-		
+
 		target.LogOutput, _ = cmd.Flags().GetStringSlice("logs-output")
 		target.LogFile, _ = cmd.Flags().GetString("logs-file")
 
@@ -191,7 +191,7 @@ func init() {
 	startCmd.Flags().StringSlice("import", []string{}, "Simulations to import")
 
 	startCmd.Flags().Bool("log-http", false, "Enable log HTTP request/response")
-	
+
 	startCmd.Flags().StringSlice("logs-output", []string{}, "Locations for log output, \"console\"(default) or \"file\"")
 	startCmd.Flags().String("logs-file", "", "Log file name. Use \"hoverfly-<target name>.log\" if not provided")
 }

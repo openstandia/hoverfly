@@ -104,10 +104,10 @@ var (
 	database     = flag.String("db", inmemoryBackend, "Storage to use - 'boltdb' or 'memory' which will not write anything to disk (DEPRECATED)")
 	disableCache = flag.Bool("disable-cache", false, "Disable the request/response cache (the cache that sits in front of matching)")
 
-	logsFormat = flag.String("logs", "plaintext", "Specify format for logs, options are \"plaintext\" and \"json\"")
-	logsSize   = flag.Int("logs-size", 1000, "Set the amount of logs to be stored in memory")
-	logsFile   = flag.String("logs-file", "hoverfly.log", "Specify log file name for output logs")
-	logNoColor = flag.Bool("log-no-color", false, "Disable colors for logging")
+	logsFormat             = flag.String("logs", "plaintext", "Specify format for logs, options are \"plaintext\" and \"json\"")
+	logsSize               = flag.Int("logs-size", 1000, "Set the amount of logs to be stored in memory")
+	logsFile               = flag.String("logs-file", "hoverfly.log", "Specify log file name for output logs")
+	logNoColor             = flag.Bool("log-no-color", false, "Disable colors for logging")
 	logHttpRequestResponse = flag.Bool("log-http", false, "Enable log HTTP request/response")
 
 	journalSize   = flag.Int("journal-size", 1000, "Set the size of request/response journal")

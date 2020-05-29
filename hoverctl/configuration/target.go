@@ -41,7 +41,7 @@ type Target struct {
 	Simulations []string `yaml:",omitempty"`
 
 	LogHttpRequestResponse bool `yaml:",omitempty"`
-	
+
 	LogOutput []string `yaml:",omitempty"`
 	LogFile   string   `yaml:",omitempty"`
 }
@@ -82,7 +82,7 @@ func (this Target) BuildFlags() Flags {
 	if this.LogHttpRequestResponse {
 		flags = append(flags, "-log-http")
 	}
-	
+
 	hasLogOutputFile := false
 	for _, logOutput := range this.LogOutput {
 		flags = append(flags, "-logs-output="+logOutput)
