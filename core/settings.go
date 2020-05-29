@@ -46,7 +46,7 @@ type Configuration struct {
 
 	NoImportCheck bool
 
-	LogHttpRequestResponse bool
+	JournalFile string
 
 	ClientAuthenticationDestination string
 	ClientAuthenticationClientCert  string
@@ -205,7 +205,7 @@ func InitSettings() *Configuration {
 
 	appConfig.CacheSize = 1000
 
-	appConfig.LogHttpRequestResponse = false
+	appConfig.JournalFile = ""
 
 	return &appConfig
 }

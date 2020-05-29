@@ -40,7 +40,7 @@ type Target struct {
 
 	Simulations []string `yaml:",omitempty"`
 
-	LogHttpRequestResponse bool `yaml:",omitempty"`
+	JournalFile string `yaml:",omitempty"`
 
 	LogOutput []string `yaml:",omitempty"`
 	LogFile   string   `yaml:",omitempty"`
@@ -79,8 +79,8 @@ func NewTarget(name, host string, adminPort, proxyPort int) *Target {
 func (this Target) BuildFlags() Flags {
 	flags := Flags{}
 
-	if this.LogHttpRequestResponse {
-		flags = append(flags, "-log-http")
+	if this.JournalFile != "" {
+		flags = append(flags, "-journal-file="+this.JournalFile)
 	}
 
 	hasLogOutputFile := false

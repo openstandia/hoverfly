@@ -104,13 +104,13 @@ var (
 	database     = flag.String("db", inmemoryBackend, "Storage to use - 'boltdb' or 'memory' which will not write anything to disk (DEPRECATED)")
 	disableCache = flag.Bool("disable-cache", false, "Disable the request/response cache (the cache that sits in front of matching)")
 
-	logsFormat             = flag.String("logs", "plaintext", "Specify format for logs, options are \"plaintext\" and \"json\"")
-	logsSize               = flag.Int("logs-size", 1000, "Set the amount of logs to be stored in memory")
-	logsFile               = flag.String("logs-file", "hoverfly.log", "Specify log file name for output logs")
-	logNoColor             = flag.Bool("log-no-color", false, "Disable colors for logging")
-	logHttpRequestResponse = flag.Bool("log-http", false, "Enable log HTTP request/response")
+	logsFormat = flag.String("logs", "plaintext", "Specify format for logs, options are \"plaintext\" and \"json\"")
+	logsSize   = flag.Int("logs-size", 1000, "Set the amount of logs to be stored in memory")
+	logsFile   = flag.String("logs-file", "hoverfly.log", "Specify log file name for output logs")
+	logNoColor = flag.Bool("log-no-color", false, "Disable colors for logging")
 
 	journalSize   = flag.Int("journal-size", 1000, "Set the size of request/response journal")
+	journalFile   = flag.String("journal-file", "", "Specify a file name for journal output")
 	cacheSize     = flag.Int("cache-size", 1000, "Set the size of request/response cache")
 	cors          = flag.Bool("cors", false, "Enable CORS support")
 	noImportCheck = flag.Bool("no-import-check", false, "Skip duplicate request check when importing simulations")
@@ -303,13 +303,12 @@ func main() {
 	}
 	cfg.Verbose = *verbose
 
-	cfg.LogHttpRequestResponse = *logHttpRequestResponse
-	if *logHttpRequestResponse {
-		f, err := os.OpenFile("journal.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if *journalFile != "" {
+		f, err := os.OpenFile(*journalFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err.Error(),
-			}).Fatal("Failed to create journal.log")
+			}).Fatal("Failed to create journal file: " + *journalFile)
 		}
 		hoverfly.Journal.SetWriter(f)
 	}

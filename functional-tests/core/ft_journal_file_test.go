@@ -25,10 +25,10 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 		hoverfly.Stop()
 	})
 
-	Context("and its in simulate mode with flag -log-http", func() {
+	Context("and its in simulate mode with flag -journal-file=journal.log", func() {
 
 		BeforeEach(func() {
-			hoverfly.Start("-webserver", "-log-http")
+			hoverfly.Start("-webserver", "-journal-file=journal.log")
 			hoverfly.SetMode("simulate")
 			hoverfly.ImportSimulation(testdata.JsonGetAndPost)
 		})

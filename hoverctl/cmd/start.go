@@ -115,7 +115,7 @@ hoverctl configuration file.
 			target.Password = password
 		}
 
-		target.LogHttpRequestResponse, _ = cmd.Flags().GetBool("log-http")
+		target.JournalFile, _ = cmd.Flags().GetString("journal-file")
 
 		target.LogOutput, _ = cmd.Flags().GetStringSlice("logs-output")
 		target.LogFile, _ = cmd.Flags().GetString("logs-file")
@@ -190,7 +190,7 @@ func init() {
 
 	startCmd.Flags().StringSlice("import", []string{}, "Simulations to import")
 
-	startCmd.Flags().Bool("log-http", false, "Enable log HTTP request/response")
+	startCmd.Flags().String("journal-file", "", "Specify a file name for journal outputs")
 
 	startCmd.Flags().StringSlice("logs-output", []string{}, "Locations for log output, \"console\"(default) or \"file\"")
 	startCmd.Flags().String("logs-file", "", "Log file name. Use \"hoverfly-<target name>.log\" if not provided")

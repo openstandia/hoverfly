@@ -96,8 +96,8 @@ func NewHoverflyWithConfiguration(cfg *Configuration) *Hoverfly {
 		}
 	}
 
-	if cfg.LogHttpRequestResponse {
-		f, err := os.OpenFile("journal.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if cfg.JournalFile != "" {
+		f, err := os.OpenFile(cfg.JournalFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			hoverfly.Journal.SetWriter(f)
 		}
