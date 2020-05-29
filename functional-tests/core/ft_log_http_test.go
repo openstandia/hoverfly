@@ -35,7 +35,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 
 		Context("I can request an endpoint", func() {
 			Context("using GET", func() {
-				It("and it should write HTTP request/response messages into log", func() {
+				It("and it should write journal message (HTTP request/response) into file journal.log", func() {
 					request := sling.New().Get("http://localhost:" + hoverfly.GetProxyPort() + "/path1")
 					response := functional_tests.DoRequest(request)
 
@@ -55,7 +55,7 @@ var _ = Describe("When running Hoverfly as a webserver", func() {
 			})
 
 			Context("using POST", func() {
-				It("and it should write HTTP request/response messages into log", func() {
+				It("and it should write journal message (HTTP request/response) into file journal.log", func() {
 					request := sling.New().Post("http://localhost:" + hoverfly.GetProxyPort() + "/path2/resource")
 
 					response := functional_tests.DoRequest(request)
